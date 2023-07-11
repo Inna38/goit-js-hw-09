@@ -1,40 +1,40 @@
-const btn = document.querySelector('button[type="submit"]');
-const form = document.querySelector(".form")
-// const amount = document.querySelector('[name="amount"]')
-// console.dir(amount);
-let timerId = null;
+import Notiflix from 'notiflix';
+const form = document.querySelector('.form');
 
-form.addEventListener("input", createPromise)
-btn.addEventListener("submit", createPromise)
+let position = 0;
 
-const promise = new Promise((res, rej) => {
- timerId = setInterval(() => {
-    createPromise()
-  }, 1000);
-  if (form[2].value) {
-  clearInterval(timerId)
+form.addEventListener('submit', onFormSubmit);
+
+function onFormSubmit(e) {
+  e.preventDefault();
+  const { delay, step, amount } = e.currentTarget.elements;
+
+  for (let i = 0; i < amount.value; i++) {
+    position += 1;
+
+    createPromise(position, delay)
+      .then(({ position, delay }) => {
+        Notiflix.Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay.value} ms`
+        );
+      })
+      .catch(({ position, delay }) => {
+        Notiflix.Notify.failure(
+          `❌ Rejected promise ${position} in ${delay.value} ms`
+        );
+      });
+  }
 }
-})
 
-  function createPromise(position, delay)
-{
-  console.log("qqq");
-console.dir(form[2].value);
+function createPromise(position, delay) {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      const shouldResolve = Math.random() > 0.3;
+      if (shouldResolve) {
+        res({ position, delay });
+      } else {
+        rej({ position, delay });
+      }
+    }, delay);
+  });
 }
-
-// function createPromise(position, delay, ) {
-//   const shouldResolve = Math.random() > 0.3;
-//   if (shouldResolve) {
-//     // Fulfill
-//   } else {
-//     // Reject
-//   }
-// }
-
-// createPromise(2, 1500)
-//   .then(({ position, delay }) => {
-//     console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-//   })
-//   .catch(({ position, delay }) => {
-//     console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-//   });
