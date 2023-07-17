@@ -36,7 +36,7 @@ function convertMs(ms) {
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
-
+  start.setAttribute('disabled', 'disabled');
   // Remaining days
   const days = addLeadingZero(Math.floor(ms / day));
   // Remaining hours
@@ -58,7 +58,9 @@ function addLeadingZero(value) {
 function createMarkup(startDate) {
   setInterval(() => {
     const calcDay = startDate - new Date();
-
+    if (calcDay <= 0) {
+      return;
+    }
     const { days, hours, minutes, seconds } = convertMs(calcDay);
     dayEl.textContent = days;
     hoursEl.textContent = hours;
